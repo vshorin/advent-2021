@@ -51,12 +51,13 @@ func day3_2() (int, error) {
 	var startw0 [][]byte
 	var startw1 [][]byte
 	err := ReadLines("./days/inputs/day3_1.txt", func(b []byte) error {
+		bx := append([]byte(nil), b...) // appending with b directly messes things up completely, so do a fresh copy
 		if b[0] > zero {
 			//log.Printf("appending ONES because %d in %v", b[0], b)
-			startw1 = append(startw1, b)
+			startw1 = append(startw1, bx)
 		} else {
 			//log.Printf("appending ZEROS because %d in %v", b[0], b)
-			startw0 = append(startw0, b)
+			startw0 = append(startw0, bx)
 		}
 		return nil
 	})
@@ -73,14 +74,16 @@ func day3_2() (int, error) {
 	}
 
 	log.Printf("day3_2 oxy = %v, co2 = %v", oxy, co2)
-	return 0, err
+	mult := calcExp(12, oxy) * calcExp(12, co2)
+	log.Printf("day3_2 result = %d", mult)
+	return mult, err
 }
 
 func makeRatings(slice [][]byte, i int, checkMostCommon bool) (ret []byte) {
 	var zeros [][]byte
 	var ones [][]byte
 	for _, v := range slice {
-		log.Printf("check checkMostCommon = %v at i = %d for v = %v", checkMostCommon, i, v)
+		//log.Printf("check checkMostCommon = %v at i = %d for v = %v", checkMostCommon, i, v)
 		if v[i] > zero {
 			ones = append(ones, v)
 		} else {
@@ -94,13 +97,28 @@ func makeRatings(slice [][]byte, i int, checkMostCommon bool) (ret []byte) {
 		} else {
 			res = zeros
 		}
+	} else {
+		if checkMostCommon {
+			res = zeros
+		} else {
+			res = ones
+		}
 	}
 	log.Printf("day3_2 at i = %d, len res = %d", i, len(res))
 
 	i++
-	if i >= len(slice[0]) {
+	if i >= len(slice[0]) || len(res) == 1 {
 		return res[0]
 	} else {
 		return makeRatings(res, i, checkMostCommon)
 	}
+}
+
+func calcExp(size int, arr []byte) (res int) {
+	for i := size - 1; i >= 0; i-- {
+		if arr[i] != zero {
+			res += int(math.Pow(2, float64(size-1-i)))
+		}
+	}
+	return
 }
