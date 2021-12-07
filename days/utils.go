@@ -53,3 +53,21 @@ func ReadLines(fn string, cb func([]byte) error) error {
 	}
 	return nil
 }
+
+func stringSliceContains(slice []string, val string) bool {
+	for _, s := range slice {
+		if s == val {
+			return true
+		}
+	}
+	return false
+}
+
+func boolSliceContains(slice []bool, val bool) bool {
+	for _, s := range slice {
+		if s == val {
+			return true
+		}
+	}
+	return false
+}
