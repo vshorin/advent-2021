@@ -47,8 +47,6 @@ func makeLines5() (lines []line, err error) {
 		if line.y2, err = strconv.Atoi(string(point2[1])); err != nil {
 			return err
 		}
-		// maxX = maxInt([]int{line.x1, line.x2, maxX})
-		// maxY = maxInt([]int{line.y1, line.y2, maxY})
 		lines = append(lines, line)
 
 		return nil
