@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 )
 
 func ReadLines(fn string, cb func([]byte) error) error {
@@ -70,4 +71,9 @@ func boolSliceContains(slice []bool, val bool) bool {
 		}
 	}
 	return false
+}
+
+func maxInt(ints []int) int {
+	sort.Ints(ints)
+	return ints[len(ints)-1]
 }

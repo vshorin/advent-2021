@@ -8,11 +8,11 @@ import (
 )
 
 func Day4() {
-	// if res, err := day4_1(); err != nil {
-	// 	log.Fatalf("crash in day4_1: %v", err)
-	// } else {
-	// 	log.Printf("day4_1 result = %d", res)
-	// }
+	if res, err := day4_1(); err != nil {
+		log.Fatalf("crash in day4_1: %v", err)
+	} else {
+		log.Printf("day4_1 result = %d", res)
+	}
 	if res, err := day4_2(); err != nil {
 		log.Fatalf("crash in day4_2: %v", err)
 	} else {
