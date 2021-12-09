@@ -9,10 +9,10 @@ var zero = []byte("0")[0]
 
 func Day3() {
 	if _, err := day3_1(); err != nil {
-		log.Fatalf("crash in day2_1: %v", err)
+		log.Fatalf("crash in day3_1: %v", err)
 	}
 	if _, err := day3_2(); err != nil {
-		log.Fatalf("crash in day2_2: %v", err)
+		log.Fatalf("crash in day3_2: %v", err)
 	}
 }
 
