@@ -2,7 +2,7 @@ package days
 
 import (
 	"log"
-	"math"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -13,24 +13,56 @@ func Day7() {
 	} else {
 		log.Printf("day7_1 result = %d", res)
 	}
-	// if res, err := day7_2(); err != nil {
-	// 	log.Fatalf("crash in day7_2: %v", err)
-	// } else {
-	// 	log.Printf("day7_2 result = %d", res)
-	// }
+	if res, err := day7_2(); err != nil {
+		log.Fatalf("crash in day7_2: %v", err)
+	} else {
+		log.Printf("day7_2 result = %d", res)
+	}
 }
 
 func countFuels(t int, numbers []int) int {
 	var counter int
 	for _, v := range numbers {
-		counter += int(math.Abs(float64(t - v)))
+		if diff := (t - v); diff >= 0 {
+			counter += diff
+		} else {
+			counter += -1 * diff
+		}
+	}
+	return counter
+}
+func countFuelsProg(t int, numbers []int) int {
+	var counter int
+	for _, v := range numbers {
+		if diff := (t - v); diff > 0 {
+			counter += fuelProgCounter(1, diff, 1)
+		} else if diff < 0 {
+			counter += fuelProgCounter(1, -1*diff, 1)
+		}
 	}
 	return counter
 }
 
-func day7_1() (int, error) {
+func fuelProgCounter(current int, max int, res int) int {
+	if current < max {
+		res += (current + 1)
+		current++
+		return fuelProgCounter(current, max, res)
+	} else {
+		//log.Printf("prog counted %d", res)
+		return res
+	}
+
+}
+
+func crabMinMax(crabs []int) (int, int) {
+	sort.Ints(crabs)
+	return crabs[0], crabs[len(crabs)-1]
+}
+
+func makeCrabs() ([]int, error) {
 	var numbers []int
-	err := ReadLines("./days/inputs/day7_x.txt", func(b []byte) error {
+	err := ReadLines("./days/inputs/day7_1.txt", func(b []byte) error {
 		splt := strings.Split(string(b), ",")
 		for _, v := range splt {
 			if nr, err := strconv.Atoi(v); err != nil {
@@ -42,59 +74,54 @@ func day7_1() (int, error) {
 		}
 		return nil
 	})
-	log.Printf("day7_1 numbers = %v", numbers)
-	var total int
-	for _, v := range numbers {
-		total += v
-	}
-	mean := total / len(numbers)
-	log.Printf("mean value = %d", mean)
-
-	prev := 0
-
-	for i := mean; i >= 0; i-- {
-		now := countFuels(i, numbers)
-		if prev != 0 {
-			if prev <= now {
-				log.Printf("prev >= now at %d (prev was %d)", i, i+1)
-				break
-			}
-		} else {
-			prev = now
-		}
-	}
-
-	return 0, err
+	return numbers, err
 }
 
-// func day7_2() (int, error) {
-// 	var startw0 [][]byte
-// 	var startw1 [][]byte
-// 	err := ReadLines("./days/inputs/day7_1.txt", func(b []byte) error {
-// 		bx := append([]byte(nil), b...) // appending with b directly messes things up completely, so do a fresh copy
-// 		if b[0] > zero {
-// 			//log.Printf("appending ONES because %d in %v", b[0], b)
-// 			startw1 = append(startw1, bx)
-// 		} else {
-// 			//log.Printf("appending ZEROS because %d in %v", b[0], b)
-// 			startw0 = append(startw0, bx)
-// 		}
-// 		return nil
-// 	})
-// 	var oxy []byte
-// 	var co2 []byte
-// 	if len(startw0) > len(startw1) {
-// 		log.Print("day7_2 at start, 0 are more common")
-// 		oxy = makeRatings(startw0, 1, true)
-// 		co2 = makeRatings(startw1, 1, false)
-// 	} else {
-// 		log.Print("day7_2 at start, 1 are more common")
-// 		oxy = makeRatings(startw1, 1, true)
-// 		co2 = makeRatings(startw0, 1, false)
-// 	}
+func day7_1() (int, error) {
+	numbers, err := makeCrabs()
+	if err != nil {
+		return 0, err
+	}
+	log.Printf("day7_1 numbers = %v", numbers)
 
-// 	log.Printf("day7_2 oxy = %v, co2 = %v", oxy, co2)
-// 	mult := calcExp(12, oxy) * calcExp(12, co2)
-// 	log.Printf("day7_2 result = %d", mult)
-// 	return mult, err
-// }
+	min, max := crabMinMax(numbers)
+
+	smallestFuel := 0
+	smallestI := 0
+	for i := min; i < max; i++ {
+		if c := countFuels(i, numbers); c < smallestFuel || smallestFuel == 0 {
+			smallestFuel = c
+			smallestI = i
+		}
+	}
+	log.Printf("smallest fuel = %d at i %d", smallestFuel, smallestI)
+
+	return smallestFuel, err
+}
+
+func day7_2() (int, error) {
+	numbers, err := makeCrabs()
+	if err != nil {
+		return 0, err
+	}
+	log.Printf("day7_1 numbers = %v", numbers)
+
+	min, max := crabMinMax(numbers)
+
+	smallestFuel := 0
+	smallestI := 0
+	for i := min; i < max; i++ {
+		c := countFuelsProg(i, numbers)
+		log.Printf("now c = %d", c)
+		if c < smallestFuel || smallestFuel == 0 {
+			log.Printf("-- setting smallest at %d to %d", i, c)
+			smallestFuel = c
+			smallestI = i
+		} else {
+			break
+		}
+	}
+	log.Printf("smallest fuel = %d at i %d", smallestFuel, smallestI)
+
+	return smallestFuel, err
+}

@@ -77,3 +77,8 @@ func maxInt(ints []int) int {
 	sort.Ints(ints)
 	return ints[len(ints)-1]
 }
+
+func minInt(ints []int) int {
+	sort.Ints(ints)
+	return ints[0]
+}
