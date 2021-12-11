@@ -73,6 +73,15 @@ func boolSliceContains(slice []bool, val bool) bool {
 	return false
 }
 
+func byteSliceContains(slice []byte, val byte) bool {
+	for _, s := range slice {
+		if s == val {
+			return true
+		}
+	}
+	return false
+}
+
 func maxInt(ints []int) int {
 	sort.Ints(ints)
 	return ints[len(ints)-1]
