@@ -3,6 +3,7 @@ package days
 import (
 	"fmt"
 	"log"
+	"sort"
 )
 
 func Day9() {
@@ -11,11 +12,11 @@ func Day9() {
 	} else {
 		log.Printf("day9_1 result = %d", res)
 	}
-	// if res, err := day9_2(); err != nil {
-	// 	log.Fatalf("crash in day9_2: %v", err)
-	// } else {
-	// 	log.Printf("day9_2 result = %d", res)
-	// }
+	if res, err := day9_2(); err != nil {
+		log.Fatalf("crash in day9_2: %v", err)
+	} else {
+		log.Printf("day9_2 result = %d", res)
+	}
 }
 
 func day9_1() (int, error) {
@@ -60,30 +61,50 @@ func day9_1() (int, error) {
 	return res, err
 }
 
-// func day9_2() (int, error) {
-// 	var pipe = []byte(" | ")
-// 	res := 0
+type region map[string]bool
 
-// 	err := ReadLines("./days/inputs/day9_1.txt", func(b []byte) error {
-// 		split := bytes.Split(b, pipe)
-// 		decoded, e := decodeDisplay(split[0])
-// 		if e != nil {
-// 			return e
-// 		}
-// 		numbs := bytes.Split(split[1], []byte(" "))
-// 		var numb string
-// 		for _, n := range numbs {
-// 			sort.Slice(n, func(i, j int) bool {
-// 				return n[i] < n[j]
-// 			})
-// 			// log.Printf("now n = %s and value = %s", n, decoded[string(n)])
-// 			numb += decoded[string(n)]
-// 		}
-// 		n, e := strconv.Atoi(numb)
-// 		// log.Printf("line number is %d", n)
-// 		res += n
-
-// 		return e
-// 	})
-// 	return res, err
-// }
+func day9_2() (int, error) {
+	var regions []region
+	iter := 0
+	nine := byte('9')
+	err := ReadLines("./days/inputs/day9_1.txt", func(b []byte) error {
+		//ints := make([]int, len(b))
+		for i, v := range b {
+			//ints[i] = byteToInt(v)
+			if v != nine {
+				foundIn := -1
+				for j, r := range regions {
+					// look for existing regions left and above. If found, add to them
+					if r[fmt.Sprintf("%d:%d", i-1, iter)] || r[fmt.Sprintf("%d:%d", i, iter-1)] {
+						r[fmt.Sprintf("%d:%d", i, iter)] = true
+						// if this was already found, need to join regions
+						if foundIn >= 0 {
+							for k := range r {
+								regions[foundIn][k] = true
+							}
+							foundIn = j
+							// delete region once joined
+							regions = append(regions[:foundIn], regions[foundIn+1:]...)
+							break
+						}
+						foundIn = j
+					}
+				}
+				if foundIn == -1 {
+					// make new region if not found
+					reg := make(region)
+					reg[fmt.Sprintf("%d:%d", i, iter)] = true
+					regions = append(regions, reg)
+				}
+			}
+		}
+		iter++
+		return nil
+	})
+	sort.Slice(regions, func(i, j int) bool {
+		return len(regions[i]) > len(regions[j])
+	})
+	log.Printf("regions = %v", regions)
+	res := len(regions[0]) * len(regions[1]) * len(regions[2])
+	return res, err
+}
