@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"sort"
+	"strconv"
 )
 
 func ReadLines(fn string, cb func([]byte) error) error {
@@ -90,4 +91,13 @@ func maxInt(ints []int) int {
 func minInt(ints []int) int {
 	sort.Ints(ints)
 	return ints[0]
+}
+
+func byteToInt(b byte) int {
+	n, e := strconv.Atoi(string(b))
+	if e != nil {
+		fmt.Printf("can't parse %d as number\n", b)
+		panic(e)
+	}
+	return n
 }
