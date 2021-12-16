@@ -101,3 +101,21 @@ func byteToInt(b byte) int {
 	}
 	return n
 }
+
+func byteArrToInt(b []byte) int {
+	n, e := strconv.Atoi(string(b))
+	if e != nil {
+		fmt.Printf("can't parse %v as number\n", b)
+		panic(e)
+	}
+	return n
+}
+
+func stringToInt(s string) int {
+	n, e := strconv.Atoi(s)
+	if e != nil {
+		fmt.Printf("can't parse %v as number\n", s)
+		panic(e)
+	}
+	return n
+}
