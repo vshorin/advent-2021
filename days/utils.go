@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func ReadLines(fn string, cb func([]byte) error) error {
@@ -118,4 +119,18 @@ func stringToInt(s string) int {
 		panic(e)
 	}
 	return n
+}
+
+func findIndicesInString(list, match string) []int {
+	// like https://stackoverflow.com/a/53942643
+	var x []int
+	for i := 0; i < len(list)-len(match); i++ {
+		j := strings.Index(list[i:], match)
+		if j < 0 {
+			break
+		}
+		i += j
+		x = append(x, i)
+	}
+	return x
 }
