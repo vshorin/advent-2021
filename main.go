@@ -1,8 +1,13 @@
 package main
 
-import "days"
+import (
+	"days"
+	"log"
+	"time"
+)
 
 func main() {
+	start := time.Now()
 	//days.Day1()
 	//days.Day2()
 	// days.Day3()
@@ -16,5 +21,7 @@ func main() {
 	// days.Day11()
 	// days.Day12()
 	// days.Day13()
-	days.Day14()
+	// days.Day14()
+	days.Day15()
+	log.Printf("days time %s", time.Since(start))
 }
